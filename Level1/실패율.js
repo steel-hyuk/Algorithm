@@ -1,36 +1,23 @@
 function solution(N, stages) {
-    var answer = [];
-    
-    // 스테이지마다 통과한 인원수
-    let pass = Array(N+1).fill(0);
-    // 스테이지에 도달한 플레이어 수
-    let challenger = Array(N+1).fill(0);
-    for (let j=0; j<stages.length; j++){
-        for (let k=1; k<=stages[j];k++){
-            if (k <= N){
-                challenger[k]++;    
-            }
-            if (k !== stages[j]){
-                pass[k]++;    
-            }
-            
+    const answer = [];
+    const failRatio = [];
+    // 총 플레이어 수
+    let totalPlayer = stages.length;
+    // 스테이지 별로 실패율 계산
+    for (let i=1; i<=N; i++) {
+        // 실패한 사람 수
+        const failplayer = stages.filter((el) => el === i).length;
+        const ratio = failplayer / totalPlayer;
+        answer.push({ i, ratio });
+        totalPlayer -= failplayer;
+    }
+    answer.sort((a, b) => {
+        if (a.ratio > b.ratio) return -1;
+        else if (a.ratio < b.ratio) return 1;
+        else {
+            if (a.i > b.i) return 1;
+            else return -1;
         }
-    }
-    let failRateArr = [];
-    for (let i=1; i<=N; i++){
-        failRateArr.push((challenger[i]-pass[i]) / challenger[i]);
-    }
-    let sortedArr = failRateArr.slice().sort((a,b)=>b-a);
-    let check = Array(failRateArr.length).fill(false);
-    for (let i=0; i<sortedArr.length; i++){
-        for (let j=0; j<failRateArr.length; j++){
-            if (sortedArr[i] === failRateArr[j] && check[j]===false){
-                answer.push(j+1);
-                check[j]=true;
-                break;
-            }
-        }
-    }
-    
-    return answer;
+    })
+    return answer.map((el) => el.i);
 }
