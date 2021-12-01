@@ -1,9 +1,10 @@
 function solution(numbers, hand) {
     var answer = '';
     
-    // 거리가 구하기
+    // 거리 구하기
+    // 좌표로 구하면 대각선의 경우 문제가 생김
     const getDistance = (x, y) => {
-        return Math.sqrt(Math.pow(x[0]-y[0], 2) + Math.pow(x[1]-y[1], 2));
+        return Math.abs(x[0]-y[0]) + Math.abs(x[1]-y[1]);
     }
     let leftLocation = [3, 0];
     let rightLocation = [3, 2];
