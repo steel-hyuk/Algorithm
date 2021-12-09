@@ -12,8 +12,8 @@ function solution(s){
         // 닫히는 괄호를 만났을 때 스택에 닫을 짝이 있는지 확인한다
         else if (s[i] === close) {
             const check = stack.pop();
-            // 짝이 맞지 않으면 false
-            if (check !== open){
+            // 짝이 맞지 않거나 맨 처음에 close가 나오면 false
+            if (check !== open || check === undefined){
                 return false;
             }
         }
