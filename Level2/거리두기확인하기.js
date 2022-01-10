@@ -1,76 +1,44 @@
 function solution(places) {
-  const arr1 = [];
-  const arr2 = [];
-  const arr3 = [];
-  const answer = [];
-  
-  for (let i=0; i<places.length; i++){
-      for (let j=0; j<places[i].length; j++){
-          for (let k=2; k<places[i][j].length; k++) {
-              if (j === places[i].length-1 && k === places[i][j].length -1) {
-                  arr1.push(1);
-                  break;
-              }
-              if (places[i][j][k] !== 'P')
-                  continue;
-              else {
-                  if (places[i][j][k-1] === 'P' ||
-                     (places[i][j][k-1] === 'O' && places[i][j][k-2] === 'P')) {
-                      arr1.push(0);
-                      j = places[i].length-1;
-                      break;
-                  }
-              }
-          }
-      }
-  }
-  for (let i=0; i<places.length; i++){
-      for (let j=2; j<places[i].length; j++){
-          for (let k=0; k<places[i][j].length; k++) {
-              if (j === places[i].length-1 && k === places[i][j].length -1) {
-                  arr2.push(1);
-                  break;
-              }
-              if (places[i][j][k] !== 'P')
-                  continue;
-              else {
-                  if (places[i][j-1][k] === 'P' ||
-                     (places[i][j-1][k] === 'O' && places[i][j-2][k] === 'P')) {
-                      arr2.push(0);
-                      j = places[i].length-1;
-                      break;
-                  }
-              }
-          }
-      }
-  }
-  for (let i=0; i<places.length; i++){
-      for (let j=1; j<places[i].length; j++){
-          for (let k=1; k<places[i][j].length; k++) {
-              if (j === places[i].length-1 && k === places[i][j].length -1) {
-                  arr3.push(1);
-                  break;
-              }
-              if (places[i][j][k] !== 'P')
-                  continue;
-              else {
-                  if (places[i][j-1][k-1] === 'P' && 
-                      (places[i][j-1][k] === 'O' || places[i][j][k-1]) === 'O') {
-                      arr3.push(0);
-                      j = places[i].length-1;
-                      break;
-                  }
-              }
-          }
-      }
-  }
-  
-  for (let i=0; i<arr1.length; i++) {
-      if (arr1[i] === 0 || arr2[i] === 0 || arr3[i] === 0) {
-          answer.push(0);
-      } else {
-          answer.push(1);
-      }
-  }
-  return answer;
+    const pLocation = new Array(5).fill().map((el) => new Array());
+    
+    // P의 위치를 배열에 담아줌
+    for (let i=0; i<places.length; i++) {
+        for (let j=0; j<places[i].length; j++){
+            for (let k=0; k<places[i][j].length; k++){
+                if (places[i][j][k] === 'P') {
+                    pLocation[i].push([j, k]);
+                }
+            }
+        }
+    }
+    
+    const checkManhattonDistance = (place, location) => {
+        const x = location[0];
+        const y = location[1];
+        
+        if (place[x+1][y] === 'P' || place[x-1][y] === 'P'
+            || place[x][y+1] === 'P' || place[x][y-1] === 'P'
+            || place[x+1][y+1] === 'P' || place[x+1][y-1] === 'P'
+            || place[x-1][y+1] === 'P' || place[x-1][y-1] === 'P'
+            || (place[x+1][y] === 'O' && place[x+2][y] === 'P')
+            || (place[x-1][y] === 'O' && place[x-2][y] === 'P')
+            || (place[x][y+1] === 'O' && place[x][y+2] === 'P')
+            || (place[x][y-1] === 'O' && place[x][y-2] === 'P')) {
+            return false;
+        }
+        return true;
+    }
+    const answer = [];
+    for (let i=0; i<pLocation.length; i++){
+        for (let j=0; j<pLocation[i].length; j++) {
+            if (checkManhattonDistance(places[i], pLocation[i][j]) === false) {
+                answer.push(0);
+                break;
+            }
+        }
+        if (answer[i] !== 0) {
+            answer.push(1);
+        }
+    }
+    return answer;
 }
