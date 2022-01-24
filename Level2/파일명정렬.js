@@ -1,52 +1,23 @@
 function solution(files) {
-  return files.sort((a, b) => {
-      // Head가 어디까지인지 구분
-      let aHeadIdx, bHeadIdx;
-      for (let i=0; i<a.length; i++){
-          if (typeof a[i] === 'number') {
-              aHeadIdx = i;
-              break;
-          }
-      }
-      for (let i=0; i<b.length; i++){
-          if (typeof b[i] === 'number') {
-              bHeadIdx = i;
-              break;
-          }
-      }
-      // Head를 기준으로 1차 정렬
-      const aHead = a.slice(0, aHeadIdx).toLowerCase();
-      const bHead = b.slice(0, bHeadIdx).toLowerCase();
-      if (aHead !== bHead) {
-          if (aHead > bHead) return 1;
-          else return -1;
-      } else {
-          // Head가 같다면 Number가 어디까지인지를 구분
-          let aNumberIdx, bNumberIdx;
-          for (let i=aHeadIdx; i<a.length; i++){
-              if (typeof a[i] !== 'number') {
-                  aNumberIdx = i;
-                  break;
-              }
-          }
-          for (let i=bHeadIdx; i<b.length; i++){
-              if (typeof b[i] !== 'number') {
-                  bNumberIdx = i;
-                  break;
-              }
-          }
-          // Number를 기준으로 2차 정렬  
-          const aNumber = Number(a.slice(aHeadIdx, aNumberIdx));
-          const bNumber = Number(b.slice(bHeadIdx, bNumberIdx));
-          if (aNumber !== bNumber) {
-              if (a < b) return aNumber - bNumber;
-              else return bNumber - aNumber;
-          } else {
-              // Number가 같다면 입력 시에 주어진 순서 유지
-              /*
-              return 0;
-              */
-          }
-      }
-  });
+    return files.sort((a, b) => {
+        // ^ 시작부분에 대응
+        // \D 숫자 문자가 아닌 문자에 대응 == ^0-9
+        // + 앞의 표현식이 1회 이상 연속으로 반복되는 부분과 대응
+        // 대소문자 구분 x 소문자로 통일
+        const aHead = a.match(/^\D+/)[0].toLowerCase();
+        const bHead = b.match(/^\D+/)[0].toLowerCase();
+        
+        // else로 묶으면 다른 조건에 정렬이 안 되기 때문에 각각 if
+        if (aHead < bHead)
+            return -1;
+        if (aHead > bHead)
+            return 1;
+        
+        // \d 숫자 문자에 대응
+        // 0으로 시작하는 부분을 공백으로 대체
+        const aNum = a.match(/\d+/)[0].replace(/^0+/, "");
+        const bNum = b.match(/\d+/)[0].replace(/^0+/, "");
+        
+        return aNum - bNum;
+    });
 }
