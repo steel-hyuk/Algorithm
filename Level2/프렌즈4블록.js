@@ -10,7 +10,7 @@ function solution(m, n, board) {
         // 2x2 크기로 깨지기 때문에 i<m-1까지로 설정
         for (let i=0; i<m-1; i++){
             for (let j=0; j<n-1; j++){
-                if (board[i][j] !== 'no' && 
+                if (board[i][j] !== 0 && 
                     board[i][j] === board[i][j+1] &&
                     board[i][j] === board[i+1][j] &&
                     board[i][j] === board[i+1][j+1])
@@ -18,14 +18,17 @@ function solution(m, n, board) {
             }
         }
         // 깨질 블록이 없는 경우 종료
-        if (breakList.length === 0) break;
+        if (breakList.length === 0) {
+            break;
+        }
         // 깨질 블록들을 br으로 바꿈
         for (let i=0; i<breakList.length; i++){
-            board[breakList[i][0]][breakList[i][1]] = 'br';
-            board[breakList[i][0] + 1][breakList[i][1]] = 'br';
-            board[breakList[i][0]][breakList[i][1] + 1] = 'br';
-            board[breakList[i][0] + 1][breakList[i][1] + 1] = 'br';
+            board[breakList[i][0]][breakList[i][1]] = 0;
+            board[breakList[i][0] + 1][breakList[i][1]] = 0;
+            board[breakList[i][0]][breakList[i][1] + 1] = 0;
+            board[breakList[i][0] + 1][breakList[i][1] + 1] = 0;
         }
+        /*
         // br인 블록들을 없애고 위에서 내려줌
         for (let i=0; i<n; i++) {
             for (let j=m-1; j>=0; j--) {
@@ -34,6 +37,7 @@ function solution(m, n, board) {
                         if (board[k][i] !== 'br' && board[k][i] !== 'no'){
                             board[j][i] = board[k][i];
                             board[k][i] = 'no';
+                            answer++;
                             break;
                         }
                     }         
@@ -43,14 +47,30 @@ function solution(m, n, board) {
             for (let j=0; j<m; j++){
                 if (board[j][i] === 'br') {
                     board[j][i] = 'no';
+                    answer++;
+                }
+            }
+        }
+        */
+        for (let i=m-1; i>0; i--) {
+            if (!board[i].some((v) => !v))
+                continue;
+            for (let j=0; j<n; j++){
+                for (let k=i-1; k>=0 && !board[i][j]; k--){
+                    if (board[k][j]) {
+                        board[i][j] = board[k][j];
+                        board[k][j] = 0;
+                        break;
+                    }
                 }
             }
         }
     }
+    
     // 몇 개의 블록을 지웠는지 카운트
     for (let i=0; i<m; i++){
         for (let j=0; j<n; j++){
-            if (board[i][j] === 'no') answer++;
+            if (board[i][j] === 0) answer++;
         }
     }
     return answer;
