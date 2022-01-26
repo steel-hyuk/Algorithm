@@ -1,44 +1,90 @@
 function solution(places) {
-    const pLocation = new Array(5).fill().map((el) => new Array());
+    const answer = [];
     
-    // P의 위치를 배열에 담아줌
-    for (let i=0; i<places.length; i++) {
-        for (let j=0; j<places[i].length; j++){
-            for (let k=0; k<places[i][j].length; k++){
-                if (places[i][j][k] === 'P') {
-                    pLocation[i].push([j, k]);
+    // 교실 안의 영역인지 확인
+    const isVaild = (location) => location >= 0 && location < 5;
+    // 사람이 있는 자리인지 확인
+    const isPerson = (location) => location === 'P';
+    // 빈 테이블인지 확인
+    const isTable = (location) => location === 'O';
+    
+    for (let place of places) {
+        // 배열로 구분
+        place.map((el, idx) => {
+            place[idx] = el.split('');
+        });
+        let ok = 1;
+        for (let i=0; i<5; i++){
+            for (let j=0; j<5; j++){
+                // 사람이 있는 자리에서 맨해튼 거리를 확인
+                if (isPerson(place[i][j])){
+                    // 상하좌우를 확인
+                    if (isVaild(i+1)) { // 하
+                        if (isPerson(place[i+1][j])) {
+                            ok = 0;
+                            break;
+                        }
+                        if (isTable(place[i+1][j])) {
+                            if (isVaild(i+2) && isPerson(place[i+2][j])){
+                                ok = 0;
+                                break;
+                            }
+                            if (isVaild(j+1) && isPerson(place[i+1][j+1])){
+                                ok = 0;
+                                break;
+                            }
+                            if (isVaild(j-1) && isPerson(place[i+1][j-1])){
+                                ok = 0;
+                                break;
+                            }
+                        }
+                    }
+                    if (isVaild(i-1)) { // 상
+                        if (isPerson(place[i-1][j])){
+                            ok = 0;
+                            break;   
+                        }
+                        if (isTable(place[i-1][j])) {
+                            if (isVaild(i-2) && isPerson(place[i-2][j])) {
+                                ok = 0;
+                                break;
+                            }
+                            if (isVaild(j+1) && isPerson(place[i-1][j+1])){
+                                ok = 0;
+                                break;
+                            }
+                            if (isVaild(j-1) && isPerson(place[i-1][j-1])) {
+                                ok = 0;
+                                break;
+                            }
+                        }
+                    }
+                    if (isVaild(j+1)) { // 우
+                        if (isPerson(place[i][j+1])){
+                            ok = 0;
+                            break;
+                        }
+                        if (isTable(place[i][j+1]) && isVaild(j+2) && isPerson(place[i][j+2])){
+                            ok = 0;
+                            break;
+                        }
+                    }
+                    if (isVaild(j-1)) { // 좌
+                        if (isPerson(place[i][j-1])) {
+                            ok = 0;
+                            break;
+                        }
+                        if (isTable(place[i][j-1]) && isVaild(j-2) && isPerson(place[i][j-2])){
+                            ok = 0;
+                            break;
+                        }
+                    }               
                 }
             }
+            if (ok === 0) break;
         }
+        answer.push(ok);
     }
     
-    const checkManhattonDistance = (place, location) => {
-        const x = location[0];
-        const y = location[1];
-        
-        if (place[x+1][y] === 'P' || place[x-1][y] === 'P'
-            || place[x][y+1] === 'P' || place[x][y-1] === 'P'
-            || place[x+1][y+1] === 'P' || place[x+1][y-1] === 'P'
-            || place[x-1][y+1] === 'P' || place[x-1][y-1] === 'P'
-            || (place[x+1][y] === 'O' && place[x+2][y] === 'P')
-            || (place[x-1][y] === 'O' && place[x-2][y] === 'P')
-            || (place[x][y+1] === 'O' && place[x][y+2] === 'P')
-            || (place[x][y-1] === 'O' && place[x][y-2] === 'P')) {
-            return false;
-        }
-        return true;
-    }
-    const answer = [];
-    for (let i=0; i<pLocation.length; i++){
-        for (let j=0; j<pLocation[i].length; j++) {
-            if (checkManhattonDistance(places[i], pLocation[i][j]) === false) {
-                answer.push(0);
-                break;
-            }
-        }
-        if (answer[i] !== 0) {
-            answer.push(1);
-        }
-    }
     return answer;
 }
