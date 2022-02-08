@@ -1,27 +1,36 @@
 function solution(maps) {
-    const LEN = maps.length;
+    let answer = 1;
+    const N = maps.length;
+    const M = maps[0].length;
     const MOVES = [
         [0, 1], // 우
+        [1, 0], // 하
         [0, -1], // 좌
-        [-1, 0], // 상
-        [1, 0] // 하
+        [-1, 0] // 상
     ];
+    const queue = [];
+    queue.push([0, 0]);
+    maps[0][0] = 0;
     
-    const func = (row, col, count) => {
-        // 탈출조건
-        if (row >= 5 || col >= 5 || row < 0 || col < 0)
-            return;
-        if (maps[row][col] === 0 || (maps[row][col] !== 1 && maps[row][col] < count))
-            return;
+    while (queue.length > 0) {
+        for (let i=0; i<queue.length; i++){
+            
+            const [row, col] = queue.shift();
         
-        maps[row][col] += count;
-        
-        MOVES.map((move) => func(row + move[0], col + move[1], maps[row][col]));
+            for (let j=0; j<MOVES.length; j++){
+                const nextRow = row + MOVES[j][0];
+                const nextCol = col + MOVES[j][1];
+            
+                if (nextRow >= 0 && nextCol >= 0 && nextRow < N && nextCol < M && maps[nextRow][nextCol] === 1) {
+                    if (nextRow === N-1 && nextCol === M-1) {
+                        return ++answer;
+                    }
+                    queue.push([nextRow, nextCol]);
+                    maps[nextRow][nextCol] = 0;
+                }
+            }
+        }
+        answer++;
     }
-    func(0, 0, 1);
-    
-    if (maps[LEN-1][LEN-1] !== 1) 
-        return maps[LEN-1][LEN-1]-1;
-    else 
-        return -1;
+    return -1;
 }
