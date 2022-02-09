@@ -1,5 +1,5 @@
 function solution(maps) {
-    let answer = 1;
+    let answer = -1;
     const N = maps.length;
     const M = maps[0].length;
     const MOVES = [
@@ -9,28 +9,26 @@ function solution(maps) {
         [-1, 0] // 상
     ];
     const queue = [];
-    queue.push([0, 0]);
+    queue.push([0, 0, 1]);
     maps[0][0] = 0;
     
     while (queue.length > 0) {
-        for (let i=0; i<queue.length; i++){
-            
-            const [row, col] = queue.shift();
+        const [row, col, count] = queue.shift();
         
-            for (let j=0; j<MOVES.length; j++){
-                const nextRow = row + MOVES[j][0];
-                const nextCol = col + MOVES[j][1];
+        if (row === N-1 && col === M-1) {
+            answer = count;
+            break;
+        }
+        
+        for (let i=0; i<MOVES.length; i++){
+            const nextRow = row + MOVES[i][0];
+            const nextCol = col + MOVES[i][1];
             
-                if (nextRow >= 0 && nextCol >= 0 && nextRow < N && nextCol < M && maps[nextRow][nextCol] === 1) {
-                    if (nextRow === N-1 && nextCol === M-1) {
-                        return ++answer;
-                    }
-                    queue.push([nextRow, nextCol]);
-                    maps[nextRow][nextCol] = 0;
-                }
+            if (nextRow >= 0 && nextCol >= 0 && nextRow < N && nextCol < M && maps[nextRow][nextCol] === 1) {
+                queue.push([nextRow, nextCol, count+1]);
+                maps[nextRow][nextCol] = 0;
             }
         }
-        answer++;
     }
-    return -1;
+    return answer;
 }
